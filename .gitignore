@@ -1,0 +1,23 @@
+# Godot 生成的临时文件和缓存
+.godot/
+.import/
+.export/
+
+# 导出可执行文件（根据你最终发布的名称调整）
+*.exe
+*.apk
+*.aab
+*.pck
+*.zip
+
+# 编辑器用户配置（含窗口布局、最近打开文件等）
+editor_settings.cfg
+.editor_metadata
+
+# 项目配置中的敏感信息（如果有密码或密钥）
+# 如果 export_presets.cfg 中包含了敏感配置，也建议忽略
+export_presets.cfg
+
+# 操作系统生成的文件
+.DS_Store
+Thumbs.db
