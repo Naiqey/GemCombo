@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="GemCard" format=3 uid="uid://brj5foafhxmbu"]
+
+[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_xyd84"]
+
+[resource]
+script = ExtResource("1_xyd84")
+metadata/_custom_type_script = "uid://bg60inm3d651x"
