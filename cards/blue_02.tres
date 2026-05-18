@@ -1,7 +1,21 @@
-[gd_resource type="Resource" script_class="GemCard" format=3 uid="uid://brj5foafhxmbu"]
+[gd_resource type="Resource" script_class="GemCard" load_steps=3 format=3 uid="uid://brj5foafhxmbu"]
 
-[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_xyd84"]
+[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_card"]
+[ext_resource type="Script" uid="uid://bn7svei31mqly" path="res://EffectResource.gd" id="2_effect"]
+
+[sub_resource type="Resource" id="Effect"]
+script = ExtResource("2_effect")
+type = 15
+value = 2
+duration = 0
+target_self = true
+metadata/_custom_type_script = "uid://bn7svei31mqly"
 
 [resource]
-script = ExtResource("1_xyd84")
+script = ExtResource("1_card")
+card_name = "预支费用"
+color = 2
+cost = 2
+effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
+description = "下回合费用 +2"
 metadata/_custom_type_script = "uid://bg60inm3d651x"

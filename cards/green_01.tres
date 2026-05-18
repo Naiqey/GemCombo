@@ -1,7 +1,21 @@
-[gd_resource type="Resource" script_class="GemCard" format=3 uid="uid://cd7gpjt3ray5o"]
+[gd_resource type="Resource" script_class="GemCard" load_steps=3 format=3 uid="uid://cd7gpjt3ray5o"]
 
-[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_18gtn"]
+[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_card"]
+[ext_resource type="Script" uid="uid://bn7svei31mqly" path="res://EffectResource.gd" id="2_effect"]
+
+[sub_resource type="Resource" id="Effect"]
+script = ExtResource("2_effect")
+type = 4
+value = 3
+duration = 0
+target_self = true
+metadata/_custom_type_script = "uid://bn7svei31mqly"
 
 [resource]
-script = ExtResource("1_18gtn")
+script = ExtResource("1_card")
+card_name = "疗愈"
+color = 3
+cost = 1
+effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
+description = "回复 3 点生命"
 metadata/_custom_type_script = "uid://bg60inm3d651x"

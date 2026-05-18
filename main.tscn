@@ -1,36 +1,304 @@
-[gd_scene format=3 uid="uid://bnpy2dpw2ko6x"]
+[gd_scene load_steps=5 format=3 uid="uid://bnpy2dpw2ko6x"]
 
 [ext_resource type="Script" uid="uid://5dqsxjtq00yp" path="res://main.gd" id="1_ig7tw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.09, 0.1, 0.12, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.36, 0.38, 0.42, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_enemy_panel"]
+bg_color = Color(0.17, 0.08, 0.08, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.76, 0.24, 0.2, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_player_panel"]
+bg_color = Color(0.08, 0.14, 0.19, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.22, 0.52, 0.78, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="Main" type="Node2D" unique_id=220301299]
 script = ExtResource("1_ig7tw")
 
+[node name="Background" type="ColorRect" parent="." unique_id=294390921]
+offset_right = 960.0
+offset_bottom = 540.0
+mouse_filter = 2
+color = Color(0.045, 0.05, 0.06, 1)
+
+[node name="StatusPanel" type="Panel" parent="." unique_id=1676849262]
+offset_left = 260.0
+offset_top = 18.0
+offset_right = 700.0
+offset_bottom = 106.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="TurnLabel" type="Label" parent="StatusPanel" unique_id=743832815]
+offset_left = 16.0
+offset_top = 10.0
+offset_right = 132.0
+offset_bottom = 36.0
+theme_override_font_sizes/font_size = 20
+text = "回合 1"
+
+[node name="PhaseLabel" type="Label" parent="StatusPanel" unique_id=1197477693]
+offset_left = 292.0
+offset_top = 12.0
+offset_right = 424.0
+offset_bottom = 35.0
+theme_override_colors/font_color = Color(0.68, 0.88, 1, 1)
+text = "玩家行动"
+horizontal_alignment = 2
+
+[node name="ComboLabel" type="Label" parent="StatusPanel" unique_id=711356675]
+offset_left = 16.0
+offset_top = 48.0
+offset_right = 130.0
+offset_bottom = 71.0
+text = "连击: 0"
+
+[node name="HandCountLabel" type="Label" parent="StatusPanel" unique_id=1738334629]
+offset_left = 150.0
+offset_top = 48.0
+offset_right = 270.0
+offset_bottom = 71.0
+text = "手牌: 3"
+
+[node name="DeckCountLabel" type="Label" parent="StatusPanel" unique_id=819435505]
+offset_left = 276.0
+offset_top = 48.0
+offset_right = 424.0
+offset_bottom = 71.0
+theme_override_colors/font_color = Color(0.8, 0.82, 0.86, 1)
+text = "抽牌: 13 / 弃牌: 0"
+horizontal_alignment = 2
+
+[node name="PlayerPanel" type="Panel" parent="." unique_id=177718552]
+offset_left = 40.0
+offset_top = 132.0
+offset_right = 286.0
+offset_bottom = 328.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_player_panel")
+
+[node name="PlayerNameLabel" type="Label" parent="PlayerPanel" unique_id=703924800]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 226.0
+offset_bottom = 38.0
+theme_override_font_sizes/font_size = 20
+text = "玩家"
+
+[node name="PlayerHpLabel" type="Label" parent="PlayerPanel" unique_id=1545483652]
+offset_left = 16.0
+offset_top = 50.0
+offset_right = 226.0
+offset_bottom = 74.0
+text = "血量: 30 / 30"
+
+[node name="EnergyLabel" type="Label" parent="PlayerPanel" unique_id=504601700]
+offset_left = 16.0
+offset_top = 80.0
+offset_right = 226.0
+offset_bottom = 104.0
+theme_override_colors/font_color = Color(0.66, 0.86, 1, 1)
+text = "费用: 3 / 3"
+
+[node name="LevelLabel" type="Label" parent="PlayerPanel" unique_id=512705274]
+offset_left = 16.0
+offset_top = 110.0
+offset_right = 226.0
+offset_bottom = 134.0
+theme_override_colors/font_color = Color(1, 0.88, 0.54, 1)
+text = "等级: 1"
+
+[node name="ExperienceLabel" type="Label" parent="PlayerPanel" unique_id=1434012507]
+offset_left = 16.0
+offset_top = 138.0
+offset_right = 226.0
+offset_bottom = 162.0
+theme_override_colors/font_color = Color(0.86, 0.84, 1, 1)
+text = "经验: 0 / 10"
+
+[node name="BlockLabel" type="Label" parent="PlayerPanel" unique_id=1707479435]
+offset_left = 16.0
+offset_top = 166.0
+offset_right = 226.0
+offset_bottom = 188.0
+theme_override_colors/font_color = Color(0.72, 0.9, 0.76, 1)
+text = "护甲: 0"
+autowrap_mode = 3
+
+[node name="EnemyPanel" type="Panel" parent="." unique_id=1660761416]
+offset_left = 674.0
+offset_top = 132.0
+offset_right = 920.0
+offset_bottom = 302.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_enemy_panel")
+
+[node name="EnemyNameLabel" type="Label" parent="EnemyPanel" unique_id=532239072]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 226.0
+offset_bottom = 38.0
+theme_override_font_sizes/font_size = 20
+text = "敌人 A"
+
+[node name="EnemyHpLabel" type="Label" parent="EnemyPanel" unique_id=722688331]
+offset_left = 16.0
+offset_top = 50.0
+offset_right = 226.0
+offset_bottom = 74.0
+text = "血量: 30 / 30"
+
+[node name="EnemyIntentLabel" type="Label" parent="EnemyPanel" unique_id=1123504829]
+offset_left = 16.0
+offset_top = 82.0
+offset_right = 226.0
+offset_bottom = 106.0
+theme_override_colors/font_color = Color(1, 0.75, 0.58, 1)
+text = "本回合: 攻击 5"
+
+[node name="EnemyTipLabel" type="Label" parent="EnemyPanel" unique_id=1507697266]
+offset_left = 16.0
+offset_top = 116.0
+offset_right = 226.0
+offset_bottom = 146.0
+theme_override_colors/font_color = Color(0.86, 0.78, 0.72, 1)
+theme_override_font_sizes/font_size = 13
+text = "护甲会先抵消攻击伤害"
+autowrap_mode = 3
+
+[node name="HandTitleLabel" type="Label" parent="." unique_id=1643873704]
+offset_left = 320.0
+offset_top = 236.0
+offset_right = 432.0
+offset_bottom = 264.0
+theme_override_colors/font_color = Color(0.88, 0.9, 0.94, 1)
+theme_override_font_sizes/font_size = 18
+text = "手牌"
+
+[node name="DrawPileButton" type="Button" parent="." unique_id=507141490]
+offset_left = 532.0
+offset_top = 230.0
+offset_right = 632.0
+offset_bottom = 264.0
+text = "抽牌堆"
+
+[node name="DiscardPileButton" type="Button" parent="." unique_id=765950608]
+offset_left = 646.0
+offset_top = 230.0
+offset_right = 746.0
+offset_bottom = 264.0
+text = "弃牌堆"
+
 [node name="HandContainer" type="HBoxContainer" parent="." unique_id=545580041]
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 200.0
-offset_top = 200.0
-offset_right = 350.0
-offset_bottom = 350.0
-grow_vertical = 0
-theme_override_constants/separation = 80
-
-[node name="EnemyHpLabel" type="Label" parent="." unique_id=722688331]
-offset_right = 40.0
-offset_bottom = 23.0
-text = "敌人血量: 30"
-
-[node name="PlayerHpLabel" type="Label" parent="." unique_id=1545483652]
-offset_left = 3.0
-offset_top = 39.0
-offset_right = 43.0
-offset_bottom = 62.0
-text = "玩家血量: 30"
+offset_left = 320.0
+offset_top = 272.0
+offset_right = 906.0
+offset_bottom = 450.0
+theme_override_constants/separation = 12
 
 [node name="EndTurnButton" type="Button" parent="." unique_id=1711835339]
-offset_left = 522.0
-offset_top = 451.0
-offset_right = 594.0
-offset_bottom = 482.0
-text = "回合结束"
+offset_left = 780.0
+offset_top = 462.0
+offset_right = 918.0
+offset_bottom = 510.0
+theme_override_font_sizes/font_size = 18
+text = "结束回合"
+
+[node name="PileWindow" type="Window" parent="." unique_id=311985646]
+title = "牌堆"
+position = Vector2i(170, 80)
+size = Vector2i(620, 380)
+visible = false
+unresizable = true
+
+[node name="PileWindowRoot" type="Control" parent="PileWindow" unique_id=1888090218]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PileWindowTitleLabel" type="Label" parent="PileWindow/PileWindowRoot" unique_id=1829663392]
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 400.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 22
+text = "抽牌堆"
+
+[node name="PileEmptyLabel" type="Label" parent="PileWindow/PileWindowRoot" unique_id=1844797825]
+offset_left = 16.0
+offset_top = 58.0
+offset_right = 588.0
+offset_bottom = 88.0
+theme_override_colors/font_color = Color(0.82, 0.84, 0.88, 1)
+text = "空"
+horizontal_alignment = 1
+
+[node name="PileScroll" type="ScrollContainer" parent="PileWindow/PileWindowRoot" unique_id=1396794931]
+offset_left = 16.0
+offset_top = 54.0
+offset_right = 600.0
+offset_bottom = 356.0
+horizontal_scroll_mode = 0
+
+[node name="PileCardGrid" type="GridContainer" parent="PileWindow/PileWindowRoot/PileScroll" unique_id=1069488370]
+layout_mode = 2
+theme_override_constants/h_separation = 14
+theme_override_constants/v_separation = 14
+columns = 4
+
+[node name="RewardWindow" type="Window" parent="." unique_id=1532299338]
+title = "选择一张卡"
+position = Vector2i(250, 92)
+size = Vector2i(460, 300)
+visible = false
+unresizable = true
+
+[node name="RewardWindowRoot" type="Control" parent="RewardWindow" unique_id=1347321375]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RewardTitleLabel" type="Label" parent="RewardWindow/RewardWindowRoot" unique_id=1584133676]
+offset_left = 18.0
+offset_top = 12.0
+offset_right = 440.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 22
+text = "升级奖励：选择一张加入牌组"
+horizontal_alignment = 1
+
+[node name="RewardCardContainer" type="HBoxContainer" parent="RewardWindow/RewardWindowRoot" unique_id=2093187781]
+offset_left = 28.0
+offset_top = 66.0
+offset_right = 432.0
+offset_bottom = 250.0
+theme_override_constants/separation = 20

@@ -1,7 +1,21 @@
-[gd_resource type="Resource" script_class="GemCard" format=3 uid="uid://bsrf7elm0huu1"]
+[gd_resource type="Resource" script_class="GemCard" load_steps=3 format=3 uid="uid://bsrf7elm0huu1"]
 
-[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_647ft"]
+[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_card"]
+[ext_resource type="Script" uid="uid://bn7svei31mqly" path="res://EffectResource.gd" id="2_effect"]
+
+[sub_resource type="Resource" id="Effect"]
+script = ExtResource("2_effect")
+type = 16
+value = 1
+duration = 0
+target_self = true
+metadata/_custom_type_script = "uid://bn7svei31mqly"
 
 [resource]
-script = ExtResource("1_647ft")
+script = ExtResource("1_card")
+card_name = "费用折扣"
+color = 2
+cost = 3
+effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
+description = "本回合手牌费用 -1，最低为 0"
 metadata/_custom_type_script = "uid://bg60inm3d651x"

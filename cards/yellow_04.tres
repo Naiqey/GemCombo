@@ -1,7 +1,21 @@
-[gd_resource type="Resource" script_class="GemCard" format=3 uid="uid://oyu6j0tjjncm"]
+[gd_resource type="Resource" script_class="GemCard" load_steps=3 format=3 uid="uid://oyu6j0tjjncm"]
 
-[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_35ppk"]
+[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_card"]
+[ext_resource type="Script" uid="uid://bn7svei31mqly" path="res://EffectResource.gd" id="2_effect"]
+
+[sub_resource type="Resource" id="Effect"]
+script = ExtResource("2_effect")
+type = 14
+value = 2
+duration = 0
+target_self = true
+metadata/_custom_type_script = "uid://bn7svei31mqly"
 
 [resource]
-script = ExtResource("1_35ppk")
+script = ExtResource("1_card")
+card_name = "抗性姿态"
+color = 1
+cost = 4
+effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
+description = "本回合获得 2 点抗性"
 metadata/_custom_type_script = "uid://bg60inm3d651x"

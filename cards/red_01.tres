@@ -1,12 +1,21 @@
-[gd_resource type="Resource" script_class="GemCard" format=3 uid="uid://d36dmdyc3ekjs"]
+[gd_resource type="Resource" script_class="GemCard" load_steps=3 format=3 uid="uid://d36dmdyc3ekjs"]
 
-[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_goxq1"]
+[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_card"]
+[ext_resource type="Script" uid="uid://bn7svei31mqly" path="res://EffectResource.gd" id="2_effect"]
+
+[sub_resource type="Resource" id="Effect"]
+script = ExtResource("2_effect")
+type = 0
+value = 2
+duration = 0
+target_self = false
+metadata/_custom_type_script = "uid://bn7svei31mqly"
 
 [resource]
-script = ExtResource("1_goxq1")
-card_name = "attack"
+script = ExtResource("1_card")
+card_name = "精准打击"
+color = 0
 cost = 1
-function_name = "attack"
-value = 5
-description = "打击"
+effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
+description = "造成 2 点单体伤害"
 metadata/_custom_type_script = "uid://bg60inm3d651x"

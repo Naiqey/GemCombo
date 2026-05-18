@@ -1,7 +1,21 @@
-[gd_resource type="Resource" script_class="GemCard" format=3 uid="uid://bbnd74davymco"]
+[gd_resource type="Resource" script_class="GemCard" load_steps=3 format=3 uid="uid://bbnd74davymco"]
 
-[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_hk3jc"]
+[ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_card"]
+[ext_resource type="Script" uid="uid://bn7svei31mqly" path="res://EffectResource.gd" id="2_effect"]
+
+[sub_resource type="Resource" id="Effect"]
+script = ExtResource("2_effect")
+type = 2
+value = 2
+duration = 2
+target_self = false
+metadata/_custom_type_script = "uid://bn7svei31mqly"
 
 [resource]
-script = ExtResource("1_hk3jc")
+script = ExtResource("1_card")
+card_name = "灼烧"
+color = 0
+cost = 2
+effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
+description = "施加 DoT：每回合 2 点，持续 2 回合"
 metadata/_custom_type_script = "uid://bg60inm3d651x"
