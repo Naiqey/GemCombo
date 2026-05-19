@@ -2,6 +2,7 @@
 .godot/
 .import/
 .export/
+builds/
 
 # 导出可执行文件（根据你最终发布的名称调整）
 *.exe
@@ -9,6 +10,7 @@
 *.aab
 *.pck
 *.zip
+*.tpz
 
 # 编辑器用户配置（含窗口布局、最近打开文件等）
 editor_settings.cfg

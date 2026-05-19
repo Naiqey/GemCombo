@@ -26,3 +26,4 @@ func break_combo():
 	current_combo = 0
 	last_card = null
 	combo_broken.emit()
+	combo_updated.emit(current_combo)

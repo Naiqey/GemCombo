@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="GemCard" load_steps=3 format=3 uid="uid://bjofm1h42syu6"]
+[gd_resource type="Resource" script_class="GemCard" format=3 uid="uid://bjofm1h42syu6"]
 
 [ext_resource type="Script" uid="uid://bg60inm3d651x" path="res://GemCard.gd" id="1_card"]
 [ext_resource type="Script" uid="uid://bn7svei31mqly" path="res://EffectResource.gd" id="2_effect"]
@@ -6,9 +6,7 @@
 [sub_resource type="Resource" id="Effect"]
 script = ExtResource("2_effect")
 type = 6
-value = 1
-duration = 0
-target_self = true
+value = 2
 metadata/_custom_type_script = "uid://bn7svei31mqly"
 
 [resource]
@@ -17,5 +15,5 @@ card_name = "战术抽牌"
 color = 1
 cost = 1
 effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
-description = "抽 1 张牌"
+description = "抽 2 张牌"
 metadata/_custom_type_script = "uid://bg60inm3d651x"
