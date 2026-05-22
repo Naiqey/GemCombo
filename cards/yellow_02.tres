@@ -16,6 +16,8 @@ script = ExtResource("1_card")
 card_name = "扩充手牌"
 color = 1
 cost = 2
+gem_slots = 0
 effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
 description = "手牌上限 +1"
 metadata/_custom_type_script = "uid://bg60inm3d651x"
+

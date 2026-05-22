@@ -16,6 +16,8 @@ script = ExtResource("1_card")
 card_name = "引爆伤口"
 color = 0
 cost = 4
+gem_slots = 0
 effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
-description = "造成 4 点伤害；若目标有 DoT，额外 +3"
+description = "造成 4 点伤害，目标有 DoT +3"
 metadata/_custom_type_script = "uid://bg60inm3d651x"
+

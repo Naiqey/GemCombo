@@ -1,11 +1,12 @@
 extends Node2D
 
-@onready var hand_container = $HandContainer
+@onready var hand_container = $HandScroll/HandContainer
 @onready var turn_label = $StatusPanel/TurnLabel
 @onready var phase_label = $StatusPanel/PhaseLabel
 @onready var combo_label = $StatusPanel/ComboLabel
 @onready var hand_count_label = $StatusPanel/HandCountLabel
 @onready var deck_count_label = $StatusPanel/DeckCountLabel
+@onready var hand_limit_label = $HandLimitLabel
 @onready var enemy_name_label = $EnemyPanel/EnemyNameLabel
 @onready var enemy_hp_label = $EnemyPanel/EnemyHpLabel
 @onready var enemy_intent_label = $EnemyPanel/EnemyIntentLabel
@@ -21,6 +22,15 @@ extends Node2D
 @onready var reward_card_container = $RewardWindow/RewardWindowRoot/RewardCardContainer
 @onready var death_window = $DeathWindow
 @onready var restart_button = $DeathWindow/DeathWindowRoot/RestartButton
+@onready var victory_window = $VictoryWindow
+@onready var victory_restart_button = $VictoryWindow/VictoryWindowRoot/VictoryRestartButton
+@onready var relic_window = $RelicWindow
+@onready var relic_name_label = $RelicWindow/RelicWindowRoot/RelicNameLabel
+@onready var relic_description_label = $RelicWindow/RelicWindowRoot/RelicDescriptionLabel
+@onready var relic_take_button = $RelicWindow/RelicWindowRoot/RelicTakeButton
+@onready var relic_skip_button = $RelicWindow/RelicWindowRoot/RelicSkipButton
+@onready var curse_list_label = $CurseListLabel
+@onready var relic_bar = $RelicBar
 @onready var player_hp_label = $PlayerPanel/PlayerHpLabel
 @onready var energy_label = $PlayerPanel/EnergyLabel
 @onready var level_label = $PlayerPanel/LevelLabel
@@ -31,10 +41,20 @@ extends Node2D
 const CARD_RESOURCE_DIR := "res://cards"
 const BASE_PLAYER_ENERGY := 4
 const STARTING_HAND_SIZE := 4
+const STARTING_HAND_LIMIT := 6
 const STARTING_CARD_COST := 1
 const STARTING_CARD_MAX_COST := 1
 const REWARD_CARD_COUNT := 3
 const COMBO_VALUE_BONUS := 2
+const EXPERIENCE_TO_LEVEL := 3
+const SMALL_ENEMY_EXPERIENCE := 1
+const SMALL_ENEMY_HEALTH := 5
+const ALL_CARD_COLORS := [
+	GemCard.GemColor.RED,
+	GemCard.GemColor.YELLOW,
+	GemCard.GemColor.BLUE,
+	GemCard.GemColor.GREEN,
+]
 
 var hand_cards: Array[GemCard] = []
 var deck_manager := DeckManager.new()
@@ -42,7 +62,7 @@ var enemy_waves := EnemyWaveManager.new()
 var pending_reward_cards: Array[GemCard] = []
 var queued_reward_count: int = 0
 var turn_count: int = 1
-var max_hand_size: int = STARTING_HAND_SIZE
+var max_hand_size: int = STARTING_HAND_LIMIT
 
 var max_player_health: int = 30
 var current_player_health: int = 30
@@ -64,6 +84,11 @@ var is_player_turn: bool = true
 var is_game_over: bool = false
 var current_pile_window_is_discard: bool = false
 var pending_target_card: GemCard = null
+var active_curses: Array[String] = []
+var pending_relic_rewards: int = 0
+var player_relics: Array[RelicResource] = []
+var pending_relic: RelicResource = null
+var pending_victory_after_relic: bool = false
 
 func _ready():
 	randomize()
@@ -78,6 +103,11 @@ func _ready():
 	reward_window.close_requested.connect(_on_reward_window_close_requested)
 	death_window.close_requested.connect(_on_death_window_close_requested)
 	restart_button.pressed.connect(_on_restart_button_pressed)
+	victory_window.close_requested.connect(_on_victory_window_close_requested)
+	victory_restart_button.pressed.connect(_on_restart_button_pressed)
+	relic_window.close_requested.connect(_on_relic_window_close_requested)
+	relic_take_button.pressed.connect(_on_relic_take_button_pressed)
+	relic_skip_button.pressed.connect(_on_relic_skip_button_pressed)
 	update_all_ui()
 
 func start_fresh_game():
@@ -85,7 +115,7 @@ func start_fresh_game():
 	pending_reward_cards.clear()
 	queued_reward_count = 0
 	turn_count = 1
-	max_hand_size = STARTING_HAND_SIZE
+	reset_hand_limit()
 	max_player_health = 30
 	current_player_health = max_player_health
 	player_level = 1
@@ -103,6 +133,12 @@ func start_fresh_game():
 	is_player_turn = true
 	is_game_over = false
 	current_pile_window_is_discard = false
+	active_curses.clear()
+	pending_relic_rewards = 0
+	player_relics.clear()
+	ComboManager.set_relics(player_relics)
+	pending_relic = null
+	pending_victory_after_relic = false
 	end_turn_button.disabled = false
 	ComboManager.break_combo()
 
@@ -111,6 +147,10 @@ func start_fresh_game():
 	reward_window.hide()
 	pile_window.hide()
 	death_window.hide()
+	victory_window.hide()
+	relic_window.hide()
+	update_curse_ui()
+	update_relic_ui()
 
 	deck_manager.build_initial_player_deck(STARTING_HAND_SIZE, STARTING_CARD_MAX_COST, STARTING_CARD_COST)
 	deck_manager.reset_draw_pile_from_player_deck()
@@ -125,6 +165,7 @@ func clear_hand():
 	pending_target_card = null
 	hand_cards.clear()
 	for child in hand_container.get_children():
+		hand_container.remove_child(child)
 		child.queue_free()
 
 func add_card_to_hand(card_data: GemCard):
@@ -138,14 +179,15 @@ func add_card_to_hand(card_data: GemCard):
 	card_ui.card_played.connect(_on_card_played)
 	hand_container.add_child(card_ui)
 	hand_cards.append(card_data)
+	update_card_ui_display(card_ui, card_data)
 	update_hand_ui()
 
-func draw_card_from_draw_pile():
+func draw_card_from_draw_pile(excluded_card: GemCard = null):
 	if hand_cards.size() >= max_hand_size:
 		update_hand_ui()
 		return
 
-	var card = deck_manager.draw_card()
+	var card = deck_manager.draw_card_for_effect(excluded_card) if excluded_card != null else deck_manager.draw_card()
 	if card == null:
 		push_warning("抽牌堆为空，无法抽牌")
 		return
@@ -189,10 +231,9 @@ func play_card(card_data: GemCard, target_index := -1):
 	current_player_energy -= play_cost
 	update_energy_ui()
 
-	var combo_triggered = ComboManager.attempt_play(card_data)
-	var combo_bonus = ComboManager.current_combo * COMBO_VALUE_BONUS if combo_triggered else 0
+	ComboManager.attempt_play(card_data)
+	var combo_bonus = ComboManager.current_combo * COMBO_VALUE_BONUS
 	remove_card_from_hand(card_data)
-	discard_card(card_data)
 
 	for effect in card_data.effects:
 		var effect_value = get_effect_value(effect, combo_bonus)
@@ -214,7 +255,7 @@ func play_card(card_data: GemCard, target_index := -1):
 				is_invincible = true
 			EffectResource.EffectType.DRAW_CARD:
 				for i in range(effect_value):
-					draw_card_from_draw_pile()
+					draw_card_from_draw_pile(card_data)
 			EffectResource.EffectType.GAIN_ENERGY:
 				current_player_energy_max += effect_value
 				current_player_energy += effect_value
@@ -232,14 +273,27 @@ func play_card(card_data: GemCard, target_index := -1):
 				current_player_energy = current_player_energy_max
 			EffectResource.EffectType.GAIN_SHIELD:
 				current_player_shield += effect_value
+			EffectResource.EffectType.DISCARD_CARD:
+				discard_cards_from_hand(effect_value)
+			EffectResource.EffectType.APPLY_VULNERABLE:
+				print("APPLY_VULNERABLE is not implemented yet. Value: ", effect_value)
+			EffectResource.EffectType.APPLY_WEAK:
+				print("APPLY_WEAK is not implemented yet. Value: ", effect_value)
+			EffectResource.EffectType.DOUBLE_DAMAGE_NEXT:
+				print("DOUBLE_DAMAGE_NEXT is not implemented yet.")
 
+	discard_card(card_data)
+	apply_after_play_curses()
 	resolve_enemy_deaths()
 	update_all_ui()
+
+func reset_hand_limit():
+	max_hand_size = STARTING_HAND_LIMIT
 
 func card_needs_target(card_data: GemCard) -> bool:
 	for effect in card_data.effects:
 		match effect.type:
-			EffectResource.EffectType.DEAL_DAMAGE_SINGLE, EffectResource.EffectType.DEAL_DAMAGE_DOT, EffectResource.EffectType.DEAL_DAMAGE_DOT_BONUS:
+			EffectResource.EffectType.DEAL_DAMAGE_SINGLE, EffectResource.EffectType.DEAL_DAMAGE_DOT, EffectResource.EffectType.DEAL_DAMAGE_DOT_BONUS, EffectResource.EffectType.APPLY_VULNERABLE, EffectResource.EffectType.APPLY_WEAK:
 				return true
 	return false
 
@@ -249,9 +303,18 @@ func remove_card_from_hand(card_data: GemCard):
 		return
 
 	var card_ui = hand_container.get_child(index)
+	hand_container.remove_child(card_ui)
 	card_ui.queue_free()
 	hand_cards.remove_at(index)
 	update_hand_ui()
+
+func discard_cards_from_hand(count: int):
+	for i in range(max(0, count)):
+		if hand_cards.is_empty():
+			return
+		var card = hand_cards.back()
+		remove_card_from_hand(card)
+		discard_card(card)
 
 func get_current_card_cost(card_data: GemCard) -> int:
 	return max(0, card_data.cost - hand_cost_reduction)
@@ -259,7 +322,7 @@ func get_current_card_cost(card_data: GemCard) -> int:
 func get_preview_combo_count(card_data: GemCard) -> int:
 	if ComboManager.last_card == null:
 		return 0
-	if card_data.color == ComboManager.last_card.color or card_data.cost == ComboManager.last_card.cost:
+	if ComboManager.can_combo(ComboManager.last_card, card_data):
 		return ComboManager.current_combo + 1
 	return 0
 
@@ -298,18 +361,28 @@ func tick_enemy_dot():
 	update_enemy_ui()
 
 func resolve_enemy_deaths() -> bool:
-	var dead_count = enemy_waves.collect_dead_enemy_count()
-	for i in range(dead_count):
-		level_up()
+	var dead_enemies = enemy_waves.collect_dead_enemies()
+	for enemy in dead_enemies:
+		gain_experience_for_enemy(enemy)
+		if bool(enemy.get("is_boss", false)) or str(enemy.get("type", "")) == EnemyWaveManager.BOSS_ENEMY_TYPE:
+			on_boss_defeated()
 
-	var wave_cleared = dead_count > 0 and not enemy_waves.has_alive_enemies()
+	var wave_cleared = not dead_enemies.is_empty() and not enemy_waves.has_alive_enemies()
 	if wave_cleared:
 		enemy_waves.advance_wave_if_cleared()
 		if enemy_waves.is_complete:
 			is_game_over = true
 			is_player_turn = false
 			end_turn_button.disabled = true
+			if relic_window.visible:
+				pending_victory_after_relic = true
+			else:
+				show_victory_window()
 		else:
+			if enemy_waves.is_current_wave_boss():
+				apply_curse(enemy_waves.current_level_index)
+			ComboManager.break_combo()
+			reset_hand_limit()
 			start_next_player_turn()
 
 	update_enemy_ui()
@@ -317,12 +390,67 @@ func resolve_enemy_deaths() -> bool:
 	update_turn_ui()
 	return wave_cleared
 
+func gain_experience_for_enemy(enemy: Dictionary):
+	if str(enemy.get("type", enemy.get("kind", ""))) != EnemyWaveManager.SMALL_ENEMY_TYPE:
+		return
+
+	player_experience += SMALL_ENEMY_EXPERIENCE
+	while player_experience >= EXPERIENCE_TO_LEVEL:
+		player_experience -= EXPERIENCE_TO_LEVEL
+		level_up()
+	update_experience_ui()
+
+func on_boss_defeated():
+	pending_relic_rewards += 1
+	print("Boss defeated. Pending relic rewards: ", pending_relic_rewards)
+	remove_curse_for_level(enemy_waves.current_level_index)
+	show_relic_window()
+
+func apply_curse(level_index: int):
+	var curse_id = "CRS-%03d" % [level_index + 1]
+	if active_curses.has(curse_id):
+		return
+	active_curses.append(curse_id)
+	print("Applied curse: ", curse_id)
+	update_curse_ui()
+
+func remove_curse_for_level(level_index: int):
+	var curse_id = "CRS-%03d" % [level_index + 1]
+	active_curses.erase(curse_id)
+	update_curse_ui()
+
+func apply_after_play_curses():
+	if active_curses.has("CRS-001"):
+		randomize_hand_card_colors()
+
+func randomize_hand_card_colors():
+	for card in hand_cards:
+		card.color = ALL_CARD_COLORS.pick_random()
+	update_hand_ui()
+
+func update_curse_ui():
+	if active_curses.is_empty():
+		curse_list_label.visible = false
+		curse_list_label.text = ""
+		return
+
+	var curse_names: Array[String] = []
+	for curse_id in active_curses:
+		curse_names.append(get_curse_name(curse_id))
+	curse_list_label.text = "诅咒: " + " / ".join(curse_names)
+	curse_list_label.visible = true
+
+func get_curse_name(curse_id: String) -> String:
+	match curse_id:
+		"CRS-001":
+			return "变色诅咒"
+	return curse_id
+
 func level_up():
 	player_level += 1
 	player_strength += 1
 	max_player_health += 5
 	current_player_health = min(max_player_health, current_player_health + 5)
-	player_experience = 0
 	queued_reward_count += 1
 	try_open_next_card_reward()
 	update_player_ui()
@@ -392,7 +520,73 @@ func enemy_attack():
 func show_death_window():
 	reward_window.hide()
 	pile_window.hide()
+	victory_window.hide()
+	relic_window.hide()
 	death_window.popup()
+
+func show_victory_window():
+	reward_window.hide()
+	pile_window.hide()
+	death_window.hide()
+	relic_window.hide()
+	victory_window.popup()
+
+func show_relic_window():
+	pending_relic_rewards = max(0, pending_relic_rewards - 1)
+	pending_relic = get_random_relic_reward()
+	if pending_relic == null:
+		return
+	relic_name_label.text = pending_relic.relic_name
+	relic_description_label.text = pending_relic.description
+	relic_window.popup()
+
+func get_random_relic_reward() -> RelicResource:
+	var relics = get_relic_pool()
+	if relics.is_empty():
+		return null
+	return relics.pick_random()
+
+func get_relic_pool() -> Array[RelicResource]:
+	return [
+		create_relic("R-001", "奇数宝珠", "奇数费用牌之间也可以触发连击。", "combo_odd_cost"),
+		create_relic("R-002", "偶数宝珠", "偶数费用牌之间也可以触发连击。", "combo_even_cost"),
+		create_relic("R-003", "猫眼石", "蓝色牌与绿色牌之间也可以触发连击。", "combo_blue_green"),
+		create_relic("R-004", "犬视晶", "黄色牌与蓝色牌之间也可以触发连击。", "combo_yellow_blue"),
+		create_relic("R-005", "彩虹宝石", "效果待定。", "tbd"),
+	]
+
+func create_relic(relic_id: String, relic_name: String, description: String, effect_type: String) -> RelicResource:
+	var relic = RelicResource.new()
+	relic.relic_id = relic_id
+	relic.relic_name = relic_name
+	relic.description = description
+	relic.effect_type = effect_type
+	return relic
+
+func close_relic_window():
+	relic_window.hide()
+	pending_relic = null
+	if pending_victory_after_relic:
+		pending_victory_after_relic = false
+		show_victory_window()
+
+func update_relic_ui():
+	for child in relic_bar.get_children():
+		relic_bar.remove_child(child)
+		child.queue_free()
+
+	relic_bar.visible = not player_relics.is_empty()
+	if player_relics.is_empty():
+		return
+
+	for relic in player_relics:
+		var label = Label.new()
+		label.text = relic.relic_name
+		label.tooltip_text = relic.description
+		label.mouse_filter = Control.MOUSE_FILTER_PASS
+		label.add_theme_color_override("font_color", Color(1.0, 0.88, 0.54, 1.0))
+		label.add_theme_font_size_override("font_size", 15)
+		relic_bar.add_child(label)
 
 func update_enemy_ui():
 	enemy_name_label.text = enemy_waves.get_wave_title()
@@ -442,7 +636,7 @@ func update_player_ui():
 
 func update_experience_ui():
 	level_label.text = "等级: " + str(player_level)
-	experience_label.text = "力量: " + str(player_strength)
+	experience_label.text = "经验: " + str(player_experience) + "/" + str(EXPERIENCE_TO_LEVEL) + "  力量: " + str(player_strength)
 
 func update_energy_ui():
 	energy_label.text = "费用: " + str(current_player_energy) + " / " + str(current_player_energy_max)
@@ -479,19 +673,31 @@ func update_combo_ui():
 	combo_label.text = "连击: " + str(ComboManager.current_combo)
 
 func update_hand_ui():
+	update_hand_limit_label()
 	hand_count_label.text = "手牌: " + str(hand_cards.size()) + " / " + str(max_hand_size)
 	deck_count_label.text = "抽:" + str(deck_manager.draw_pile.size()) + " 弃:" + str(deck_manager.discard_pile.size()) + " 组:" + str(deck_manager.player_deck.size())
 	draw_pile_button.text = "抽牌堆 " + str(deck_manager.draw_pile.size())
 	discard_pile_button.text = "弃牌堆 " + str(deck_manager.discard_pile.size())
 
+	while hand_container.get_child_count() > hand_cards.size():
+		var stale_card_ui = hand_container.get_child(hand_container.get_child_count() - 1)
+		hand_container.remove_child(stale_card_ui)
+		stale_card_ui.queue_free()
+
 	for i in range(hand_container.get_child_count()):
 		var card_ui = hand_container.get_child(i)
-		if card_ui.has_method("set_display_context") and i < hand_cards.size():
-			var card = hand_cards[i]
-			card_ui.set_display_context(get_current_card_cost(card), player_strength, turn_strength, get_preview_combo_bonus(card))
+		if i < hand_cards.size():
+			update_card_ui_display(card_ui, hand_cards[i])
 
 	if pile_window.visible:
 		refresh_pile_window()
+
+func update_card_ui_display(card_ui: Node, card: GemCard):
+	if card_ui.has_method("set_display_context"):
+		card_ui.set_display_context(get_current_card_cost(card), player_strength, turn_strength, get_preview_combo_bonus(card))
+
+func update_hand_limit_label():
+	hand_limit_label.text = str(hand_cards.size()) + "/" + str(max_hand_size)
 
 func update_all_ui():
 	update_enemy_ui()
@@ -574,6 +780,22 @@ func _on_restart_button_pressed():
 
 func _on_death_window_close_requested():
 	death_window.popup()
+
+func _on_victory_window_close_requested():
+	victory_window.popup()
+
+func _on_relic_window_close_requested():
+	relic_window.popup()
+
+func _on_relic_take_button_pressed():
+	if pending_relic != null:
+		player_relics.append(pending_relic)
+		ComboManager.set_relics(player_relics)
+		update_relic_ui()
+	close_relic_window()
+
+func _on_relic_skip_button_pressed():
+	close_relic_window()
 
 func _on_combo_updated(_combo: int):
 	update_combo_ui()

@@ -16,6 +16,8 @@ script = ExtResource("1_card")
 card_name = "无敌"
 color = 3
 cost = 4
+gem_slots = 0
 effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
 description = "本回合无敌"
 metadata/_custom_type_script = "uid://bg60inm3d651x"
+

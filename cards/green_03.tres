@@ -16,6 +16,8 @@ script = ExtResource("1_card")
 card_name = "护盾"
 color = 3
 cost = 3
+gem_slots = 0
 effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
-description = "生成 1 个 2 点护盾"
+description = "获得 2 点护盾"
 metadata/_custom_type_script = "uid://bg60inm3d651x"
+

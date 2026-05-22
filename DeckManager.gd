@@ -58,10 +58,27 @@ func rebuild_draw_pile_from_player_deck():
 
 func draw_card() -> GemCard:
 	if draw_pile.is_empty():
-		refill_draw_pile_from_discard()
-	if draw_pile.is_empty():
 		return null
 
+	return draw_pile.pop_back()
+
+func draw_card_for_effect(excluded_card: GemCard = null) -> GemCard:
+	var card = draw_card()
+	if card != null:
+		return card
+
+	var candidates: Array[GemCard] = []
+	for discarded_card in discard_pile:
+		if excluded_card != null and is_same_card_template(discarded_card, excluded_card):
+			continue
+		candidates.append(discarded_card)
+
+	if candidates.is_empty():
+		return null
+
+	draw_pile = candidates.duplicate()
+	discard_pile.clear()
+	draw_pile.shuffle()
 	return draw_pile.pop_back()
 
 func draw_cards(count: int) -> Array[GemCard]:
@@ -103,3 +120,8 @@ func get_reward_cards(count: int) -> Array[GemCard]:
 		var template = candidates[i % candidates.size()]
 		rewards.append(template.duplicate(true) as GemCard)
 	return rewards
+
+func is_same_card_template(a: GemCard, b: GemCard) -> bool:
+	if a == null or b == null:
+		return false
+	return a.card_name == b.card_name and a.color == b.color and a.cost == b.cost

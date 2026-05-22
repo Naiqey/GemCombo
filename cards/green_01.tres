@@ -16,6 +16,8 @@ script = ExtResource("1_card")
 card_name = "疗愈"
 color = 3
 cost = 1
+gem_slots = 0
 effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
 description = "回复 3 点生命"
 metadata/_custom_type_script = "uid://bg60inm3d651x"
+

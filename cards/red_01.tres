@@ -16,6 +16,8 @@ script = ExtResource("1_card")
 card_name = "精准打击"
 color = 0
 cost = 1
+gem_slots = 0
 effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
 description = "造成 2 点单体伤害"
 metadata/_custom_type_script = "uid://bg60inm3d651x"
+

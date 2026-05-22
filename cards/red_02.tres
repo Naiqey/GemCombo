@@ -16,6 +16,8 @@ script = ExtResource("1_card")
 card_name = "灼烧"
 color = 0
 cost = 2
+gem_slots = 0
 effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
-description = "施加 DoT：每回合 2 点，持续 2 回合"
+description = "施加 DoT: 2 x 2"
 metadata/_custom_type_script = "uid://bg60inm3d651x"
+

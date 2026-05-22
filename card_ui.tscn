@@ -143,3 +143,13 @@ text = "造成 5 点单体伤害"
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
+
+[node name="GemSlotContainer" type="HBoxContainer" parent="Button" unique_id=584216021]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 156.0
+offset_right = 82.0
+offset_bottom = 166.0
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 1

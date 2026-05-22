@@ -17,6 +17,7 @@ signal card_played(card_data: GemCard)
 @onready var name_label = $Button/NameLabel
 @onready var gem_label = $Button/GemLabel
 @onready var function_label = $Button/FunctionLabel
+@onready var gem_slot_container = $Button/GemSlotContainer
 
 func _ready():
 	update_display()
@@ -67,6 +68,7 @@ func update_display():
 	name_label.text = card_data.card_name
 	gem_label.text = gem_text
 	function_label.text = _get_card_description()
+	_update_gem_slots()
 
 func _set_cost_badge_color(color: Color):
 	var style = StyleBoxFlat.new()
@@ -81,6 +83,29 @@ func _set_cost_badge_color(color: Color):
 	style.corner_radius_bottom_right = 16
 	style.corner_radius_bottom_left = 16
 	cost_badge.add_theme_stylebox_override("panel", style)
+
+func _update_gem_slots():
+	for child in gem_slot_container.get_children():
+		gem_slot_container.remove_child(child)
+		child.queue_free()
+
+	for i in range(max(0, card_data.gem_slots)):
+		var slot = Panel.new()
+		slot.custom_minimum_size = Vector2(8, 8)
+		slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var style = StyleBoxFlat.new()
+		style.bg_color = Color(0, 0, 0, 0)
+		style.border_width_left = 1
+		style.border_width_top = 1
+		style.border_width_right = 1
+		style.border_width_bottom = 1
+		style.border_color = Color(0.82, 0.86, 0.9, 0.85)
+		style.corner_radius_top_left = 4
+		style.corner_radius_top_right = 4
+		style.corner_radius_bottom_right = 4
+		style.corner_radius_bottom_left = 4
+		slot.add_theme_stylebox_override("panel", style)
+		gem_slot_container.add_child(slot)
 
 func _get_card_description() -> String:
 	if _uses_static_description():
@@ -124,6 +149,14 @@ func _get_card_description() -> String:
 				parts.append("重置本回合费用")
 			EffectResource.EffectType.GAIN_SHIELD:
 				parts.append("获得 " + str(value) + " 点护盾")
+			EffectResource.EffectType.DISCARD_CARD:
+				parts.append("弃 " + str(value) + " 张牌")
+			EffectResource.EffectType.APPLY_VULNERABLE:
+				parts.append("施加易伤 " + str(value))
+			EffectResource.EffectType.APPLY_WEAK:
+				parts.append("施加虚弱 " + str(value))
+			EffectResource.EffectType.DOUBLE_DAMAGE_NEXT:
+				parts.append("下一张攻击牌伤害翻倍")
 			_:
 				parts.append("特殊效果")
 

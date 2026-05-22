@@ -23,3 +23,9 @@ export_presets.cfg
 # 操作系统生成的文件
 .DS_Store
 Thumbs.db
+
+# Local Codex spreadsheet scratch files
+.codex_spreadsheet_work/
+
+# Office temporary lock files
+~$*.xlsx

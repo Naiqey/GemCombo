@@ -14,6 +14,8 @@ script = ExtResource("1_card")
 card_name = "蓄能"
 color = 2
 cost = 1
+gem_slots = 0
 effects = Array[ExtResource("2_effect")]([SubResource("Effect")])
 description = "本回合获得 2 点额外费用"
 metadata/_custom_type_script = "uid://bg60inm3d651x"
+
