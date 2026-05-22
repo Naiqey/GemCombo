@@ -131,6 +131,16 @@ Audit:
 Validated:
 - Godot headless scene load succeeded: D:\Godot\Godot.exe --headless --path D:\GodotProject\gem-combo res://main.tscn --quit.
 
+### Codex Update - 2026-05-23 Continue Backlog GC-008 GC-010
+Changed:
+- DeckManager.gd: merged duplicate draw-pile rebuild logic behind `_rebuild_draw_pile_from_player_deck(...)`; reset and new-turn rebuild now share one implementation.
+- main.gd: target-selection mode now highlights all alive enemy buttons with an amber bordered style.
+- main.gd: target selection can now be cancelled with Esc, a blank left-click, or by clicking the same pending target card again.
+- Godot generated `.png.import` metadata for placeholder art assets after headless import.
+
+Validated:
+- Godot headless scene load succeeded: D:\Godot\Godot.exe --headless --path D:\GodotProject\gem-combo res://main.tscn --quit.
+
 ## Decisions
 
 | Date | Decision | Reason |

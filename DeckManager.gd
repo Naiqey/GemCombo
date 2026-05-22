@@ -43,15 +43,16 @@ func build_initial_player_deck(deck_size: int, max_cost: int, exact_cost := -1):
 		player_deck.append(template.duplicate(true) as GemCard)
 
 func reset_draw_pile_from_player_deck():
-	draw_pile.clear()
-	discard_pile.clear()
-	for card in player_deck:
-		draw_pile.append(card.duplicate(true) as GemCard)
-	draw_pile.shuffle()
+	_rebuild_draw_pile_from_player_deck(true)
 
 func rebuild_draw_pile_from_player_deck():
+	# New turns rebuild from the player's owned deck; this intentionally clears all temporary piles.
+	_rebuild_draw_pile_from_player_deck(true)
+
+func _rebuild_draw_pile_from_player_deck(clear_discard: bool):
 	draw_pile.clear()
-	discard_pile.clear()
+	if clear_discard:
+		discard_pile.clear()
 	for card in player_deck:
 		draw_pile.append(card.duplicate(true) as GemCard)
 	draw_pile.shuffle()
