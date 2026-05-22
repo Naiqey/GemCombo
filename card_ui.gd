@@ -2,8 +2,21 @@ extends Control
 
 signal card_played(card_data: GemCard)
 
+class GemSlotCircle:
+	extends Control
+
+	const SLOT_COLOR := Color(0.917647, 0.92549, 0.933333, 1.0)
+
+	func _init():
+		custom_minimum_size = Vector2(8, 8)
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw():
+		draw_arc(Vector2(4, 4), 3.25, 0.0, TAU, 32, SLOT_COLOR, 1.5, true)
+
 @export var card_data: GemCard
 @export var is_preview: bool = false
+@export var is_affordable: bool = true
 @export var display_cost: int = -1
 @export var display_player_strength: int = 0
 @export var display_turn_strength: int = 0
@@ -26,11 +39,12 @@ func _ready():
 	else:
 		button.pressed.connect(_on_button_pressed)
 
-func set_display_context(cost: int, player_strength: int, turn_strength: int, combo_bonus: int):
+func set_display_context(cost: int, player_strength: int, turn_strength: int, combo_bonus: int, affordable: bool = true):
 	display_cost = cost
 	display_player_strength = player_strength
 	display_turn_strength = turn_strength
 	display_combo_bonus = combo_bonus
+	is_affordable = affordable
 	if is_node_ready():
 		update_display()
 
@@ -62,7 +76,10 @@ func update_display():
 
 	color_rect.color = bg_color
 	top_band.color = band_color
-	_set_cost_badge_color(band_color)
+	var disabled_due_to_cost := not is_preview and not is_affordable
+	modulate.a = 0.45 if disabled_due_to_cost else 1.0
+	button.disabled = is_preview or disabled_due_to_cost
+	_set_cost_badge_color(Color(0.333333, 0.333333, 0.333333, 1.0) if disabled_due_to_cost else band_color)
 
 	number_label.text = str(display_cost if display_cost >= 0 else card_data.cost)
 	name_label.text = card_data.card_name
@@ -90,21 +107,7 @@ func _update_gem_slots():
 		child.queue_free()
 
 	for i in range(max(0, card_data.gem_slots)):
-		var slot = Panel.new()
-		slot.custom_minimum_size = Vector2(8, 8)
-		slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var style = StyleBoxFlat.new()
-		style.bg_color = Color(0, 0, 0, 0)
-		style.border_width_left = 1
-		style.border_width_top = 1
-		style.border_width_right = 1
-		style.border_width_bottom = 1
-		style.border_color = Color(0.82, 0.86, 0.9, 0.85)
-		style.corner_radius_top_left = 4
-		style.corner_radius_top_right = 4
-		style.corner_radius_bottom_right = 4
-		style.corner_radius_bottom_left = 4
-		slot.add_theme_stylebox_override("panel", style)
+		var slot = GemSlotCircle.new()
 		gem_slot_container.add_child(slot)
 
 func _get_card_description() -> String:

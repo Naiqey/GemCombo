@@ -694,7 +694,8 @@ func update_hand_ui():
 
 func update_card_ui_display(card_ui: Node, card: GemCard):
 	if card_ui.has_method("set_display_context"):
-		card_ui.set_display_context(get_current_card_cost(card), player_strength, turn_strength, get_preview_combo_bonus(card))
+		var current_cost = get_current_card_cost(card)
+		card_ui.set_display_context(current_cost, player_strength, turn_strength, get_preview_combo_bonus(card), current_player_energy >= current_cost)
 
 func update_hand_limit_label():
 	hand_limit_label.text = str(hand_cards.size()) + "/" + str(max_hand_size)

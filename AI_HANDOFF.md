@@ -116,6 +116,21 @@ Needs User:
 - In-editor gameplay retest: enter Boss wave, confirm curse label appears; kill Boss while escorts remain, confirm curse label disappears and the next played card no longer triggers CRS-001.
 - Pick up a relic and confirm RelicBar appears; hover relic name to confirm tooltip text.
 
+### Codex Update - 2026-05-23 Art Asset Intake Prep
+Changed:
+- Created the ART_DIRECTION.md delivery directory structure under `assets/`, including card art/frame folders, enemy level folders, relics, icons, UI panels/buttons/popups, backgrounds, vfx, and fonts.
+- Added `.gitkeep` files for empty intake folders so the structure can be committed before final art arrives.
+- Added 1x1 transparent PNG placeholders for every currently missing file listed in ART_DIRECTION.md section 5 UI asset list, placed under the matching `assets/` subfolders.
+- card_ui.gd: card cost-disabled state now uses `modulate.a = 0.45` and greys the cost badge with `#555555`; no separate disabled texture is required.
+- card_ui.gd: gem slots now render as 8px empty circles with `#EAECEE` stroke and 1.5px line width.
+- main.gd: card UI display context now passes affordability so card_ui can render disabled state from current energy.
+
+Audit:
+- `card_ui.gd`, `main.tscn`, and `main.gd` currently have no hardcoded `card_{color}_{number}_art.png`, `card_{color}_{number}_frame.png`, or `enemy_{level}_{type}_sprite.png` references to update. No existing art files were renamed.
+
+Validated:
+- Godot headless scene load succeeded: D:\Godot\Godot.exe --headless --path D:\GodotProject\gem-combo res://main.tscn --quit.
+
 ## Decisions
 
 | Date | Decision | Reason |
