@@ -141,6 +141,23 @@ Changed:
 Validated:
 - Godot headless scene load succeeded: D:\Godot\Godot.exe --headless --path D:\GodotProject\gem-combo res://main.tscn --quit.
 
+### Codex Update - 2026-05-23 GC-026 EnemyUnit First Phase
+Changed:
+- Added `enemy_unit.gd` and `enemy_unit.tscn` as the first-phase graphical enemy object.
+- EnemyUnit displays a sprite/placeholder, HP bar and HP text, ATK overlay, DoT indicator, Boss marker, dead overlay, and target-highlight frame.
+- main.gd: `refresh_enemy_list_ui()` now instantiates EnemyUnit instead of creating plain text Button nodes.
+- main.gd: EnemyUnit `enemy_clicked(enemy_index)` is connected to the existing `_on_enemy_target_pressed()` path, preserving targeted card play logic.
+- Added simple placeholder enemy PNGs at `assets/enemies/level_{1..5}/enemy_{level}_{small|big|boss}_sprite.png`.
+
+Validated:
+- Godot headless scene load succeeded: D:\Godot\Godot.exe --headless --path D:\GodotProject\gem-combo res://main.tscn --quit.
+- Static check: `main.gd` no longer creates plain enemy Button nodes for the primary enemy display.
+- Static check: EnemyUnit exposes `enemy_clicked(enemy_index)` and main.gd connects it.
+
+Needs User:
+- In-editor gameplay retest: play a single-target card, confirm all alive EnemyUnit objects highlight; click one enemy and confirm only that enemy takes damage.
+- Retest DoT and Boss waves: DoT indicator, Boss marker, dead overlay, and disabled dead enemies should display correctly.
+
 ## Decisions
 
 | Date | Decision | Reason |

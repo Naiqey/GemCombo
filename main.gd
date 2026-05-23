@@ -49,6 +49,7 @@ const COMBO_VALUE_BONUS := 2
 const EXPERIENCE_TO_LEVEL := 3
 const SMALL_ENEMY_EXPERIENCE := 1
 const SMALL_ENEMY_HEALTH := 5
+const ENEMY_UNIT_SCENE := preload("res://enemy_unit.tscn")
 const ALL_CARD_COLORS := [
 	GemCard.GemColor.RED,
 	GemCard.GemColor.YELLOW,
@@ -625,50 +626,11 @@ func refresh_enemy_list_ui():
 
 	for i in range(enemy_waves.enemies.size()):
 		var enemy = enemy_waves.enemies[i]
-		var button = Button.new()
-		button.custom_minimum_size = Vector2(190, 56)
-		button.text = get_enemy_button_text(enemy)
-		button.disabled = not enemy_waves.is_enemy_alive(i)
-		apply_enemy_button_target_style(button, enemy_waves.is_enemy_alive(i))
-		button.pressed.connect(_on_enemy_target_pressed.bind(i))
-		enemy_list_container.add_child(button)
-
-func apply_enemy_button_target_style(button: Button, is_alive: bool):
-	if pending_target_card == null or not is_alive:
-		button.remove_theme_stylebox_override("normal")
-		button.remove_theme_stylebox_override("hover")
-		button.remove_theme_stylebox_override("pressed")
-		button.remove_theme_color_override("font_color")
-		return
-
-	var normal_style = create_enemy_target_style(Color(0.30, 0.20, 0.06, 1.0), Color(0.95, 0.61, 0.07, 1.0))
-	var hover_style = create_enemy_target_style(Color(0.42, 0.28, 0.08, 1.0), Color(1.0, 0.76, 0.18, 1.0))
-	button.add_theme_stylebox_override("normal", normal_style)
-	button.add_theme_stylebox_override("hover", hover_style)
-	button.add_theme_stylebox_override("pressed", hover_style)
-	button.add_theme_color_override("font_color", Color(1.0, 0.93, 0.72, 1.0))
-
-func create_enemy_target_style(bg_color: Color, border_color: Color) -> StyleBoxFlat:
-	var style = StyleBoxFlat.new()
-	style.bg_color = bg_color
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.border_color = border_color
-	style.corner_radius_top_left = 6
-	style.corner_radius_top_right = 6
-	style.corner_radius_bottom_right = 6
-	style.corner_radius_bottom_left = 6
-	return style
-
-func get_enemy_button_text(enemy: Dictionary) -> String:
-	var text = str(enemy["name"]) + "  " + str(enemy["health"]) + "/" + str(enemy["max_health"]) + " HP"
-	text += "\nATK " + str(enemy.get("attack", 0))
-	var dot_duration = int(enemy.get("dot_duration", 0))
-	if dot_duration > 0:
-		text += "  DoT " + str(enemy.get("dot_damage", 0)) + " x " + str(dot_duration)
-	return text
+		var enemy_unit = ENEMY_UNIT_SCENE.instantiate()
+		enemy_unit.setup(enemy, i, enemy_waves.get_current_level_number())
+		enemy_unit.set_target_highlight(pending_target_card != null and enemy_waves.is_enemy_alive(i))
+		enemy_unit.enemy_clicked.connect(_on_enemy_target_pressed)
+		enemy_list_container.add_child(enemy_unit)
 
 func _on_enemy_target_pressed(enemy_index: int):
 	if pending_target_card == null or not enemy_waves.is_enemy_alive(enemy_index):

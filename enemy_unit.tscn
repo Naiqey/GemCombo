@@ -1,0 +1,151 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://enemy_unit.gd" id="1_enemy"]
+
+[node name="EnemyUnit" type="Button"]
+custom_minimum_size = Vector2(104, 150)
+offset_right = 104.0
+offset_bottom = 150.0
+mouse_filter = 0
+script = ExtResource("1_enemy")
+
+[node name="SpriteContainer" type="Control" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 8.0
+offset_right = 92.0
+offset_bottom = 88.0
+mouse_filter = 2
+
+[node name="SpriteRect" type="TextureRect" parent="SpriteContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stretch_mode = 5
+
+[node name="FallbackSprite" type="ColorRect" parent="SpriteContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.290196, 0.290196, 0.415686, 1)
+
+[node name="TargetFrame" type="Panel" parent="SpriteContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DeadOverlay" type="ColorRect" parent="SpriteContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.290196, 0.290196, 0.415686, 0.5)
+
+[node name="HpBar" type="Control" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 94.0
+offset_right = 92.0
+offset_bottom = 100.0
+mouse_filter = 2
+
+[node name="HpBack" type="ColorRect" parent="HpBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.0509804, 0.0509804, 0.0784314, 1)
+
+[node name="HpFill" type="ColorRect" parent="HpBar"]
+layout_mode = 1
+anchors_preset = 13
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.152941, 0.682353, 0.376471, 1)
+
+[node name="StatsRow" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 104.0
+offset_right = 96.0
+offset_bottom = 124.0
+mouse_filter = 2
+theme_override_constants/separation = 5
+alignment = 1
+
+[node name="BossTag" type="Label" parent="StatsRow"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 12
+text = "★"
+
+[node name="AtkLabel" type="Label" parent="StatsRow"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 12
+text = "ATK 0"
+
+[node name="DotContainer" type="HBoxContainer" parent="StatsRow"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="DotIcon" type="Label" parent="StatsRow/DotContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 10
+text = "DoT"
+
+[node name="DotLabel" type="Label" parent="StatsRow/DotContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 10
+text = "0"
+
+[node name="HpLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 124.0
+offset_right = 96.0
+offset_bottom = 138.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+text = "0/0"
+horizontal_alignment = 1
+
+[node name="NameLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 136.0
+offset_right = 98.0
+offset_bottom = 150.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 11
+text = "敌人"
+horizontal_alignment = 1
+clip_text = true
