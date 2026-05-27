@@ -627,10 +627,10 @@ func refresh_enemy_list_ui():
 	for i in range(enemy_waves.enemies.size()):
 		var enemy = enemy_waves.enemies[i]
 		var enemy_unit = ENEMY_UNIT_SCENE.instantiate()
+		enemy_list_container.add_child(enemy_unit)
 		enemy_unit.setup(enemy, i, enemy_waves.get_current_level_number())
 		enemy_unit.set_target_highlight(pending_target_card != null and enemy_waves.is_enemy_alive(i))
 		enemy_unit.enemy_clicked.connect(_on_enemy_target_pressed)
-		enemy_list_container.add_child(enemy_unit)
 
 func _on_enemy_target_pressed(enemy_index: int):
 	if pending_target_card == null or not enemy_waves.is_enemy_alive(enemy_index):
