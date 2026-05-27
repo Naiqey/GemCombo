@@ -158,6 +158,19 @@ Needs User:
 - In-editor gameplay retest: play a single-target card, confirm all alive EnemyUnit objects highlight; click one enemy and confirm only that enemy takes damage.
 - Retest DoT and Boss waves: DoT indicator, Boss marker, dead overlay, and disabled dead enemies should display correctly.
 
+### Codex Update - 2026-05-28 Simple Pixel UI Pass
+Changed:
+- main.tscn: Replaced rounded panel styles with hard-edge pixel-style StyleBoxFlat panels using the ART_DIRECTION dark pixel palette.
+- main.tscn: Added shared hard-edge button normal/hover/disabled styles and applied them to main action, pile, restart, and relic choice buttons.
+- card_ui.tscn / card_ui.gd: Updated cards to hard-edge pixel-style colors, square cost badges, and square gem slots.
+- Preserved current layout and gameplay logic; this is a simple placeholder skin, not final PNG art integration.
+
+Validated:
+- Godot headless scene load succeeded: D:\Godot\Godot.exe --headless --path D:\GodotProject\gem-combo res://main.tscn --quit.
+
+Needs User:
+- Visual retest in editor/game window: confirm the simple pixel style reads better and no labels/buttons overlap after the style pass.
+
 ## Decisions
 
 | Date | Decision | Reason |

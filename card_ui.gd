@@ -12,7 +12,7 @@ class GemSlotCircle:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	func _draw():
-		draw_arc(Vector2(4, 4), 3.25, 0.0, TAU, 32, SLOT_COLOR, 1.5, true)
+		draw_rect(Rect2(Vector2(1, 1), Vector2(6, 6)), SLOT_COLOR, false, 1.0)
 
 @export var card_data: GemCard
 @export var is_preview: bool = false
@@ -52,30 +52,33 @@ func update_display():
 	if not card_data:
 		return
 
-	var bg_color := Color(0.18, 0.2, 0.24)
-	var band_color := Color(0.32, 0.48, 0.82)
+	var bg_color := Color("#1A1A2E")
+	var band_color := Color("#1A6FA8")
 	var gem_text := "蓝"
 
 	match card_data.color:
 		GemCard.GemColor.RED:
-			bg_color = Color(0.35, 0.08, 0.07)
-			band_color = Color(0.85, 0.18, 0.14)
+			bg_color = Color("#C0392B")
+			band_color = Color("#922B21")
 			gem_text = "红"
 		GemCard.GemColor.YELLOW:
-			bg_color = Color(0.34, 0.27, 0.08)
-			band_color = Color(0.95, 0.68, 0.16)
+			bg_color = Color("#D4AC0D")
+			band_color = Color("#9A7D0A")
 			gem_text = "黄"
 		GemCard.GemColor.BLUE:
-			bg_color = Color(0.08, 0.18, 0.34)
-			band_color = Color(0.18, 0.44, 0.88)
+			bg_color = Color("#1A6FA8")
+			band_color = Color("#154F78")
 			gem_text = "蓝"
 		GemCard.GemColor.GREEN:
-			bg_color = Color(0.08, 0.27, 0.18)
-			band_color = Color(0.18, 0.62, 0.35)
+			bg_color = Color("#1E8449")
+			band_color = Color("#196F3D")
 			gem_text = "绿"
 
 	color_rect.color = bg_color
 	top_band.color = band_color
+	gem_label.add_theme_color_override("font_color", Color("#EAECEE"))
+	function_label.add_theme_color_override("font_color", Color("#EAECEE"))
+	name_label.add_theme_color_override("font_color", Color("#EAECEE"))
 	var disabled_due_to_cost := not is_preview and not is_affordable
 	modulate.a = 0.45 if disabled_due_to_cost else 1.0
 	button.disabled = is_preview or disabled_due_to_cost
@@ -95,10 +98,10 @@ func _set_cost_badge_color(color: Color):
 	style.border_width_right = 2
 	style.border_width_bottom = 2
 	style.border_color = Color(1, 1, 1, 0.8)
-	style.corner_radius_top_left = 16
-	style.corner_radius_top_right = 16
-	style.corner_radius_bottom_right = 16
-	style.corner_radius_bottom_left = 16
+	style.corner_radius_top_left = 0
+	style.corner_radius_top_right = 0
+	style.corner_radius_bottom_right = 0
+	style.corner_radius_bottom_left = 0
 	cost_badge.add_theme_stylebox_override("panel", style)
 
 func _update_gem_slots():
