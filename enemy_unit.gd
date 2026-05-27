@@ -65,7 +65,7 @@ func setup(enemy_data: Dictionary, index: int, wave_level_number: int):
 
 func update_hp(value: int):
 	current_health = max(0, value)
-	var percent := clamp(float(current_health) / float(max_health), 0.0, 1.0)
+	var percent: float = clamp(float(current_health) / float(max_health), 0.0, 1.0)
 	hp_fill.anchor_right = percent
 	hp_fill.color = COLOR_DANGER if percent <= 0.3 else COLOR_HP
 	hp_label.text = str(current_health) + "/" + str(max_health)
